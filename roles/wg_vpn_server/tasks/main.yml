@@ -1,0 +1,60 @@
+# code: language=ansible
+- name: "Install wireguard, iptables-persistent and netfilter-persistent"
+  ansible.builtin.apt:
+    name:
+      - wireguard
+      - iptables-persistent
+      - netfilter-persistent
+    update_cache: true
+
+- name: "Generate wireguard private key"
+  ansible.builtin.shell: wg genkey | tee private.key
+  register: wg_vpn_server_private_key
+
+- name: "Generate wireguard public key"
+  ansible.builtin.shell: echo {{ wg_vpn_server_private_key.stdout }} | wg pubkey | tee public.key
+  register: wg_vpn_server_public_key
+
+- name: "Show private key"
+  ansible.builtin.debug:
+    msg: "Wireguard private key is {{ wg_vpn_server_private_key.stdout }}. It is also saved in file private.key on the remote machine."
+
+- name: "Show public key"
+  ansible.builtin.debug:
+    msg: "Wireguard public key is {{ wg_vpn_server_public_key.stdout }}. It is also saved in file public.key on the remote machine."
+
+- name: "Make wireguard configuration file from the template"
+  ansible.builtin.template:
+    src: wg0.conf.j2
+    dest: /etc/wireguard/wg0.conf
+
+- name: "Make iptables persistent rules from the template"
+  ansible.builtin.template:
+    src: iptables.j2
+    dest: /etc/iptables/rules.v4
+
+- name: "Enable ipv4 routing"
+  ansible.posix.sysctl:
+    name: "net.ipv4.ip_forward"
+    value: 1
+    sysctl_set: true
+    state: present
+    reload: true
+
+- name: "Enable and start wireguard service"
+  ansible.builtin.service:
+    name: wg-quick@wg0
+    state: started
+    enabled: true
+
+- name: "Generate clients config files on your localhost"
+  delegate_to: localhost
+  become: false
+  ansible.builtin.template:
+    src: client_exmaple.conf.j2
+    dest: ./{{ item.comment }}.conf
+  loop: "{{ wg_vpn_server_clients.values() | list }}"
+
+- name: "Reboot machine and wait for startup"
+  ansible.builtin.reboot:
+    reboot_timeout: 600

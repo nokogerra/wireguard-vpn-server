@@ -1,0 +1,14 @@
+wg_vpn_server_public_ip: "1.1.1.1"
+wg_vpn_server_tun_ip: "10.217.0.1"
+wg_vpn_server_tun_net_id: "10.217.0.0"
+wg_vpn_server_tun_net_prefix: "28"
+wg_vpn_server_port: "31194"
+wg_vpn_server_clients:
+  client1:
+    comment: "Vasya"
+    pubkey: "ADfHS+4vxkV0+0tq0cALoqCqb08hg2A9Q7r2BwncdTo="
+    allowedips: "10.217.0.2"
+  client2:
+    comment: "Petya"
+    pubkey: "R77f+wmxYORqB0kCP5k2BFN/qKoFamCxKLcKzYCphUw="
+    allowedips: "10.217.0.3"

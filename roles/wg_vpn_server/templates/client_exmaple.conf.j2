@@ -1,0 +1,9 @@
+[Interface]
+PrivateKey = PUT_YOUR_PRIVATE_KEY_HERE
+Address = {{ item.allowedips }}/{{ wg_vpn_server_tun_net_prefix }}
+
+[Peer]
+PublicKey = {{ wg_vpn_server_public_key.stdout }}
+AllowedIPs = 0.0.0.0/0
+Endpoint = {{ wg_vpn_server_public_ip }}:{{ wg_vpn_server_port }}
+PersistentKeepalive = 15

@@ -1,0 +1,14 @@
+[Interface]
+Address = {{ wg_vpn_server_tun_ip }}/{{ wg_vpn_server_tun_net_prefix }}
+ListenPort =  {{ wg_vpn_server_port }}
+SaveConfig = false
+PrivateKey = {{ wg_vpn_server_private_key.stdout }}
+PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o {{ ansible_facts['default_ipv4']['interface'] }} -j MASQUERADE
+PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o {{ ansible_facts['default_ipv4']['interface'] }} -j MASQUERADE
+
+{% for c in wg_vpn_server_clients -%}
+[Peer]
+#{{ wg_vpn_server_clients[c].comment }}
+PublicKey = {{ wg_vpn_server_clients[c].pubkey }}
+AllowedIPs = {{ wg_vpn_server_clients[c].allowedips }}/32
+{% endfor %}
