@@ -1,3 +1,5 @@
+# code: language=ansible
+---
 wg_vpn_server_public_ip: "1.1.1.1"
 wg_vpn_server_tun_ip: "10.217.0.1"
 wg_vpn_server_tun_net_id: "10.217.0.0"
