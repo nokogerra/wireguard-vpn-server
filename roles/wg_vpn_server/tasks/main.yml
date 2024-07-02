@@ -7,6 +7,15 @@
       - netfilter-persistent
     update_cache: true
 
+- name: "Make sure directories /etc/wireguard and /etc/iptables are created"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0644'
+  loop:
+    - "/etc/wireguard"
+    - "/etc/iptables"
+
 - name: "Generate wireguard private key"
   ansible.builtin.shell: wg genkey | tee private.key
   register: wg_vpn_server_private_key
@@ -17,11 +26,11 @@
 
 - name: "Show private key"
   ansible.builtin.debug:
-    msg: "Wireguard private key is {{ wg_vpn_server_private_key.stdout }}. It is also saved in file private.key on the remote machine."
+    msg: "Wireguard private key is {{ wg_vpn_server_private_key.stdout }}. It is also saved in file private.key on the remote machine (in ansible user home dir)."
 
 - name: "Show public key"
   ansible.builtin.debug:
-    msg: "Wireguard public key is {{ wg_vpn_server_public_key.stdout }}. It is also saved in file public.key on the remote machine."
+    msg: "Wireguard public key is {{ wg_vpn_server_public_key.stdout }}. It is also saved in file public.key on the remote machine (in ansible user home dir)."
 
 - name: "Make wireguard configuration file from the template"
   ansible.builtin.template:

@@ -1,21 +1,25 @@
 # code: language=ansible
 ---
-- name: "Prepare nodes for bootstraping a k8s cluster"
+- name: "Prepare a simple Wireguard server with SNAT and routing enabled"
   hosts: all
   vars:
     wg_vpn_server_public_ip: "1.1.1.1"
-    wg_vpn_server_tun_ip: "10.217.0.1"
-    wg_vpn_server_tun_net_id: "10.217.0.0"
+    wg_vpn_server_tun_ip: "10.232.0.1"
+    wg_vpn_server_tun_net_id: "10.232.0.0"
     wg_vpn_server_tun_net_prefix: "28"
     wg_vpn_server_port: "31194"
     wg_vpn_server_clients:
       client1:
-        comment: "Vasya"
-        pubkey: "ADfHS+4vxkV0+0tq0cALoqCqb08hg2A9Q7r2BwncdTo="
-        allowedips: "10.217.0.2"
+        comment: "John"
+        pubkey: "p/4HaCceg+wpTokoXsftBb8xc7WsdAGaNBz0rwDQL2Q="
+        allowedips: "10.232.0.2"
       client2:
-        comment: "Petya"
-        pubkey: "R77f+wmxYORqB0kCP5k2BFN/qKoFamCxKLcKzYCphUw="
-        allowedips: "10.217.0.3"
+        comment: "kagerro-laptop"
+        pubkey: "Zh9l0oDPstWeV7yJ3QdogNF08zZrP7ODbxnMw/ieFkE="
+        allowedips: "10.233.0.3"
+      client3:
+        comment: "kagerro-phone"
+        pubkey: "oCu65FQwE8LCjX4QZXyPqcBBrU4IWRyapiITauzqF38="
+        allowedips: "10.233.0.4"
   roles:
     - wg_vpn_server
